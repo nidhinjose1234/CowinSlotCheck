@@ -10,7 +10,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 url_host = 'https://cdn-api.co-vin.in/api/'
 api_search = 'v2/appointment/sessions/public/calendarByPin'
-my_no = '+919743355533'
 
 
 def send_message(phone_no, message):
@@ -61,7 +60,6 @@ def process(phn, pincodes, chk_age, vax_dose, today, wait_time):
                     time.sleep(wait_time)       # Before next run
 
         except TimeoutError or OSError:
-            # send_message(my_no, 'Timeout while fetching slots, check execution')
             time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
             print(f'Timeout error at {time_now}')
             time.sleep(60)
@@ -72,7 +70,6 @@ def process(phn, pincodes, chk_age, vax_dose, today, wait_time):
         except:
             time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
             print(f'Connection error at {time_now}')
-            # send_message(my_no, 'Connection error while fetching slots, check execution')
             time.sleep(60)
             break
 
@@ -85,6 +82,7 @@ if __name__ == '__main__':
     pins = sys.argv[5:]          # List of pincodes
     check_date = datetime.datetime.now().date()
     tod = check_date.strftime('%d-%m-%Y')
+
 
 # Login to Whatsapp
     chrome = webdriver.Chrome('chromedriver')  # Use the downloaded chromedriver
