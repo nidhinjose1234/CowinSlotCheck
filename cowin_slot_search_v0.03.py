@@ -31,7 +31,6 @@ def slot_check(phone, pincode, vacc, age, dose_no, date):
         for center in centers:
             sessions = center.get('sessions')
             for session in sessions:
-                print(session)
                 dose_find = 'available_capacity_dose' + dose_no
                 if session.get('min_age_limit') == age and session.get(dose_find) > 1 and \
                         (not (bool(vacc)) or session.get('vaccine') == vacc):
