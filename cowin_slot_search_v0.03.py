@@ -28,22 +28,27 @@ def slot_check(phone, pincode, vacc, age, dose_no, date):
     if response.status_code == 200:
         result = json.loads(response.text)
         centers = result.get('centers')
+
         for center in centers:
             sessions = center.get('sessions')
+
             for session in sessions:
                 dose_find = 'available_capacity_dose' + dose_no
-                if session.get('min_age_limit') == age and session.get(dose_find) > 1 and \
-                        (not (bool(vacc)) or session.get('vaccine') == vacc):
+                age_limit = session.get('min_age_limit')
+                dose_count = int(session.get(dose_find))
+                vacc_name = session.get('vaccine')
+
+                if age_limit == age and dose_count > 1 and vacc_name == vacc:
 
                     slot_found = True
                     time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
                     # Print a system output
-                    print(f'{session.get(dose_find)} slots for Dose {dose_no} Opened in '
+                    print(f'{dose_count} slots for {vacc_name} Dose {dose_no} opened in '
                           f'{center.get("name")} at pincode {pincode} for date {session.get("date")} '
                           f'at {time_now}')
                     # Send a Message
                     send_message(phone,
-                                 f'{session.get(dose_find)} slots  for Dose {dose_no} Opened in '
+                                 f'{dose_count} slots for {vacc_name} Dose {dose_no} opened in '
                                  f'{center.get("name")} at pincode {pincode} for date {session.get("date")}')
     else:
         time.sleep(10)               # Wait for 10 seconds before next run
@@ -79,12 +84,12 @@ def process(phn, pincodes, vax, chk_age, vax_dose, today, wait_time):
 
 
 if __name__ == '__main__':
-    mobile = input('Mobile number to notify (Including Country Code e.g. +919123456789): ')
-    vaccine = input('Vaccine Name (All caps, leave blank to check both): ')
-    min_age = input('Age group (18/40/45): ')
-    dose = input('Dose Number (1/2): ')
-    wait = int(input('Time gap between fetch (3/6/9 according to number of parallel sessions) in seconds: '))
-    pin_str = input('Pincodes to search (Multiple separated by spaces): ')
+    mobile = input('Mobile number to notify (e.g. +919123456789): ')
+    vaccine = input('Vaccine Name (All Caps): ')
+    min_age = int(input('Age group (18/40/45): '))
+    dose_num = input('Dose Number (1/2): ')
+    wait = int(input('Time gap between fetch (3/6/9.., according to number of parallel sessions) in seconds: '))
+    pin_str = input('Pincodes to search (Multiple separated by space): ')
     pins = pin_str.split(' ')
     pins = list(map(lambda pin: int(pin), pins))
     check_date = datetime.datetime.now().date()
@@ -98,7 +103,7 @@ if __name__ == '__main__':
 
     while True:
         try:
-            process(mobile, pins, vaccine, min_age, dose, tod, wait)
+            process(mobile, pins, vaccine, min_age, dose_num, tod, wait)
         except KeyboardInterrupt:
             print('Thank you')
             break
