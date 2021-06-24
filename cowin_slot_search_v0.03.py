@@ -9,7 +9,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 url_host = 'https://cdn-api.co-vin.in/api/'
 api_search = 'v2/appointment/sessions/public/calendarByPin'
-my_no = '+919743355533'
 
 
 def send_message(phone_no, message):

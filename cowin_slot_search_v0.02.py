@@ -31,21 +31,24 @@ def slot_check(phone, pincode, vacc, age, dose_no, date):
         for center in centers:
             sessions = center.get('sessions')
             for session in sessions:
-                print(session)
                 dose_find = 'available_capacity_dose' + dose_no
-                if session.get('min_age_limit') == age and session.get(dose_find) > 1 and \
-                        (not (bool(vacc)) or session.get('vaccine') == vacc):
+                age_limit = session.get('min_age_limit')
+                dose_count = int(session.get(dose_find))
+                vacc_name = session.get('vaccine')
+
+                if age_limit == age and dose_count > 1 and vacc_name == vacc:
 
                     slot_found = True
                     time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
                     # Print a system output
-                    print(f'{session.get(dose_find)} slots for Dose {dose_no} Opened in '
+                    print(f'{dose_count} slots for {vacc_name} Dose {dose_no} opened in '
                           f'{center.get("name")} at pincode {pincode} for date {session.get("date")} '
                           f'at {time_now}')
                     # Send a Message
                     send_message(phone,
-                                 f'{session.get(dose_find)} slots  for Dose {dose_no} Opened in '
+                                 f'{dose_count} slots for {vacc_name} Dose {dose_no} opened in '
                                  f'{center.get("name")} at pincode {pincode} for date {session.get("date")}')
+
     else:
         time.sleep(10)               # Wait for 10 seconds before next run
     return slot_found
