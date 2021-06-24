@@ -1,7 +1,6 @@
 import datetime
 import json
 import requests
-import sys
 from urllib.parse import quote
 import time
 from selenium import webdriver
@@ -81,12 +80,14 @@ def process(phn, pincodes, vax, chk_age, vax_dose, today, wait_time):
 
 
 if __name__ == '__main__':
-    mobile = sys.argv[1]
-    vaccine = sys.argv[2]
-    min_age = int(sys.argv[3])
-    dose = sys.argv[4]
-    wait = int(sys.argv[5])
-    pins = sys.argv[6:]          # List of pincodes
+    mobile = input('Mobile number to notify (Including Country Code e.g. +919123456789): ')
+    vaccine = input('Vaccine Name (All caps, leave blank to check both): ')
+    min_age = input('Age group (18/40/45): ')
+    dose = input('Dose Number (1/2): ')
+    wait = int(input('Time gap between fetch (3/6/9 according to number of parallel sessions) in seconds: '))
+    pin_str = input('Pincodes to search (Multiple separated by spaces): ')
+    pins = pin_str.split(' ')
+    pins = list(map(lambda pin: int(pin), pins))
     check_date = datetime.datetime.now().date()
     tod = check_date.strftime('%d-%m-%Y')
 
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     chrome = webdriver.Chrome('chromedriver')  # Use the downloaded chromedriver
     chrome.get('https://web.whatsapp.com/')
     chrome.maximize_window()
-    time.sleep(120)             # Time to login
+    login = input('Enter any key after login: ')
 
     while True:
         try:
