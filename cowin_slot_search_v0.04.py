@@ -20,7 +20,7 @@ def send_message(phone_no, message):
     time.sleep(2)
 
 
-def slot_check(phone, pincode, vacc, age, dose_no, date):
+def slot_check(phone, pincode, vacc, dose_no, date):
     slot_found = False
     url = url_host + api_search
     response = requests.get(url, {'pincode': pincode, 'date': date})
@@ -33,33 +33,33 @@ def slot_check(phone, pincode, vacc, age, dose_no, date):
 
             for session in sessions:
                 dose_find = 'available_capacity_dose' + dose_no
-                age_limit = session.get('min_age_limit')
                 dose_count = int(session.get(dose_find))
                 vacc_name = session.get('vaccine')
+                age_limit = session.get('min_age_limit')
 
-                if age_limit == age and dose_count > 0 and vacc_name == vacc:
+                if dose_count > 0 and vacc_name == vacc:
 
                     slot_found = True
                     time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
                     # Print a system output
-                    print(f'{dose_count} slots for {vacc_name} Dose {dose_no} opened in '
+                    print(f'{dose_count} slots for {vacc_name} Dose {dose_no} and age {age_limit}+ opened in '
                           f'{center.get("name")} at pincode {pincode} for date {session.get("date")} '
                           f'at {time_now}')
                     # Send a Message
                     send_message(phone,
-                                 f'{dose_count} slots for {vacc_name} Dose {dose_no} opened in '
+                                 f'{dose_count} slots for {vacc_name} Dose {dose_no} and age {age_limit}+ opened in '
                                  f'{center.get("name")} at pincode {pincode} for date {session.get("date")}')
     else:
         time.sleep(10)               # Wait for 10 seconds before next run
     return slot_found
 
 
-def process(phn, pincodes, vax, chk_age, vax_dose, today, wait_time):
+def process(phn, pincodes, vax, vax_dose, today, wait_time):
 
     while True:
         try:
             for code in pincodes:
-                found = slot_check(phn, code, vax, chk_age, vax_dose, today)
+                found = slot_check(phn, code, vax, vax_dose, today)
                 if found:
                     time.sleep(10)
                 else:
@@ -85,7 +85,6 @@ def process(phn, pincodes, vax, chk_age, vax_dose, today, wait_time):
 if __name__ == '__main__':
     mobile = input('Mobile number to notify (e.g. +919123456789): ')
     vaccine = input('Vaccine Name (All Caps): ')
-    min_age = int(input('Age group (18/40/45): '))
     dose_num = input('Dose Number (1/2): ')
     wait = int(input('Time gap between fetch (3/6/9.., according to number of parallel sessions) in seconds: '))
     pin_str = input('Pincodes to search (Multiple separated by space): ')
@@ -102,7 +101,7 @@ if __name__ == '__main__':
 
     while True:
         try:
-            process(mobile, pins, vaccine, min_age, dose_num, tod, wait)
+            process(mobile, pins, vaccine, dose_num, tod, wait)
         except KeyboardInterrupt:
             print('Thank you')
             break

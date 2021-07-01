@@ -36,7 +36,7 @@ def slot_check(phone, pincode, vacc, age, dose_no, date):
                 dose_count = int(session.get(dose_find))
                 vacc_name = session.get('vaccine')
 
-                if age_limit == age and dose_count > 1 and vacc_name == vacc:
+                if age_limit == age and dose_count > 0 and vacc_name == vacc:
 
                     slot_found = True
                     time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
