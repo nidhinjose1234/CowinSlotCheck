@@ -59,6 +59,7 @@ def slot_check(phone, pincode, vacc, dose_no, date):
                                  f'{dose_count} slots of {vacc_name} Dose {dose_no} for {age_limit} opened in '
                                  f'{center.get("name")} at pincode {pincode} for date {session.get("date")}')
     else:
+        print(f'API Fetch error, status code: {response.status_code}. Search will continue in 10 secs')
         time.sleep(10)               # Wait for 10 seconds before next run
     return slot_found
 
@@ -77,17 +78,17 @@ def process(phn, pincodes, vax, vax_dose, today, wait_time):
         except TimeoutError or OSError:
             # send_message(my_no, 'Timeout while fetching slots, check execution')
             time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
-            print(f'Timeout error at {time_now}')
-            time.sleep(60)
+            print(f'Timeout error at {time_now}. Search wil continue after 30 secs')
+            time.sleep(30)
             break
         except KeyboardInterrupt:
             print('Thank you')
             break
         except:
             time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
-            print(f'Connection error at {time_now}')
+            print(f'Connection error at {time_now}. Search wil continue after 30 secs')
             # send_message(my_no, 'Connection error while fetching slots, check execution')
-            time.sleep(60)
+            time.sleep(30)
             break
 
 
@@ -115,7 +116,7 @@ if __name__ == '__main__':
             print('Thank you')
             break
         except:
-            time.sleep(60)      # Try again after a minute
+            time.sleep(30)      # Try again after a minute
             continue
 
         time.sleep(30)  # Search resume after 30 seconds
