@@ -107,7 +107,6 @@ if __name__ == '__main__':
     chrome = webdriver.Chrome('chromedriver')  # Use the downloaded chromedriver
     chrome.get('https://web.whatsapp.com/')
     chrome.maximize_window()
-    login = input('Enter any key after login: ')
 
     while True:
         try:
